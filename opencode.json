@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "skill": {
+      "*": "ask",
+      "format-add": "allow",
+      "music-start": "allow",
+      "reel-new": "allow",
+      "remotion-compose": "allow",
+      "render-check": "allow",
+      "scene-plan": "allow",
+      "track-prepare": "allow",
+      "transcribe-timing": "allow",
+      "trend-analyze": "allow"
+    },
+    "bash": {
+      "*": "allow",
+      "npm run generate*": "ask"
+    }
+  }
+}

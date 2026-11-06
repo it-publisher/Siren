@@ -1,0 +1,16 @@
+# Бриф музыкального рилса
+account: music
+format: story-clip   # или talking-closeup, остальные форматы только разобраны
+character: ""       # имя папки в characters/
+track:
+  file: ""          # например assets/tracks/song.wav
+  title: ""
+  lyrics_file: ""
+  generator: ""     # сервис, которым создан трек
+language: en
+mood: ""
+references: []
+trend_report: null
+fragment_seconds: 40
+call_to_action: ""
+notes: ""

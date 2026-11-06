@@ -1,0 +1,3 @@
+# Рендеру нужна сеть для шрифтов, генерации нужен fal.ai. Codex читает этот файл только в доверенном проекте.
+[sandbox_workspace_write]
+network_access = true

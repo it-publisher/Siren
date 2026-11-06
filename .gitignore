@@ -1,0 +1,75 @@
+# Система
+.DS_Store
+
+# Секреты
+.env
+.env.*
+!.env.example
+
+# Зависимости и сборка
+node_modules/
+.venv/
+__pycache__/
+dist/
+build/
+out/
+*.log
+
+# Модели и кэш локальных инструментов
+models/
+.cache/
+.whisper/
+
+# Рабочая папка: черновики и промежуточные файлы пересоздаются при запуске
+work/*
+!work/README.md
+
+# Тестовые персонажи не должны попасть в публичный клон движка
+characters/test-*/
+
+# Замеры роликов пересоздаются командой analyze-video, в git только отчёты трендов
+trends/*/*/analysis/
+
+# Бинарные файлы не храним в git, для них нужна отдельная резервная копия
+# Видео и аудио
+*.mp4
+*.mov
+*.m4v
+*.webm
+*.mkv
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.ogg
+
+# Изображения
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.avif
+*.heic
+*.tiff
+
+# Шрифты
+*.ttf
+*.otf
+*.woff
+*.woff2
+
+# Модели и архивы
+*.bin
+*.pt
+*.pth
+*.onnx
+*.gguf
+*.safetensors
+*.bundle
+*.zip
+*.pdf
+
+# Настройка предпросмотра: пути и запуск у каждого свои
+.claude/launch.json

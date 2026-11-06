@@ -1,0 +1,44 @@
+{
+  "name": "siren-engine",
+  "version": "1.0.0",
+  "description": "Instagram Reels engine",
+  "repository": {},
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.540",
+    "@remotion/google-fonts": "4.0.540",
+    "@remotion/install-whisper-cpp": "4.0.540",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.540"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.540",
+    "@types/react": "19.3.0",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src scripts && tsc",
+    "test": "node --test test/",
+    "render:smoke": "remotion render Smoke out/smoke.mp4",
+    "transcribe": "node scripts/transcribe.mjs",
+    "align": "node scripts/align-captions.mjs",
+    "review": "node scripts/build-review.mjs",
+    "generate": "node --env-file=../.env scripts/fal-generate.mjs",
+    "analyze-video": "node scripts/analyze-video.mjs",
+    "analyze-track": "uv run --no-build --quiet scripts/analyze-track.py"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}
