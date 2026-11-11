@@ -20,8 +20,8 @@
 | [Claude Code](https://code.claude.com/docs/en/setup) | Сценарии, разбор рефов, запуск шагов, правки | [Своя подписка](https://www.anthropic.com/legal/consumer-terms) | ✅ |
 | [Claude Desktop](https://code.claude.com/docs/en/desktop) | Основной интерфейс на этапе черновиков: чат и встроенный браузер для Remotion Studio, HTML и видео | Входит в подписку | ✅ |
 | [Remote Control](https://code.claude.com/docs/en/remote-control) | Управление сессией на Mac с iPhone или из браузера | Входит в подписку | ✅ |
-| [OpenCode](https://opencode.ai/docs/skills/) | Другой агент: читает `AGENTS.md` и `.agents/skills` | Зависит от провайдера модели | ⚠️ Конфиг принят, правило на `npm run generate` применилось. Сценарий с моделью ещё не запускали |
-| [Codex](https://learn.chatgpt.com/docs/build-skills) | Другой агент: читает `AGENTS.md` и `.agents/skills` | Зависит от плана | ⚠️ Настройка по документации, запуска не было |
+| [OpenCode](https://opencode.ai/docs/skills/) | Другой агент: читает `AGENTS.md` и `.agents/skills` | Зависит от провайдера модели | ✅ Сценарий пройден |
+| [Codex](https://learn.chatgpt.com/docs/build-skills) | Другой агент: читает `AGENTS.md` и `.agents/skills` | Зависит от плана | ✅ Сценарий пройден |
 | [Remotion](https://www.remotion.dev/docs) | Шаблоны роликов, предпросмотр в Remotion Studio и рендер | [Бесплатно](https://www.remotion.dev/docs/license/faq) для команды до 3 человек | ✅ Версия 4.0.540, тестовый рендер на Node 26 |
 | `@remotion/google-fonts` | Шрифты Inter и JetBrains Mono без файлов в репозитории | Бесплатно | ✅ Кириллица проверена, при рендере нужна сеть |
 | [Remotion Agent Skills](https://www.remotion.dev/docs/ai/skills) | Инструкции для агента по работе с Remotion | Бесплатно | ⚠️ Ещё не установлены |
@@ -43,7 +43,7 @@
 |---|---|---|---|
 | [Seedream 4.5](https://fal.ai/models/fal-ai/bytedance/seedream/v4.5/text-to-image) | Варианты внешности персонажа | $0,04 за кадр | ⚠️ На сравнении одного кадра самый реалистичный по оценке пользователя |
 | [Seedream 4.5 Edit](https://fal.ai/models/fal-ai/bytedance/seedream/v4.5/edit) | Набор референсов и стартовые кадры сцен | $0,04 за кадр | ⚠️ Лицо держится на тестовом наборе, цвет глаз задавать явно |
-| [MiniMax H3 Max Lip Sync](https://fal.ai/models/minimax/h3-max/lip-sync/image-to-video), 768P | Пение | $0,08/с, клип длиннее 15 с $0,096/с | ⚠️ Губы на слух подтверждены только в 1080P, клип 7 с |
+| [MiniMax H3 Max Lip Sync](https://fal.ai/models/minimax/h3-max/lip-sync/image-to-video), 768P | Пение | $0,08/с, клип длиннее 15 с $0,096/с | ✅ Губы на слух подтверждены в 768P и 1080P |
 | [Demucs](https://fal.ai/models/fal-ai/demucs) | Чистый вокал для липсинка | $0,0007/с | ✅ Использован в подтверждённом на слух клипе |
 | [Kling 4.0 Reference to Video](https://fal.ai/models/kling/v4/reference-to-video), 720p | Планы без пения | $0,157/с | ⚠️ Лицо держится, действие выполнено слабо, широкие планы пока выглядят как ИИ |
 | [Suno](https://suno.com/pricing) | Создание треков вне движка, если выбран этот сервис | От $8–10 в месяц, [права](https://help.suno.com/en/articles/2416769) на Pro и Premier | ✅ Права. ⚠️ Точная цена |

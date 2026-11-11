@@ -9,10 +9,10 @@
 | Задача | Инструмент | Цена | Статус |
 |---|---|---|---|
 | Сценарии, разбор, правки | Claude Code: [Claude Desktop](https://code.claude.com/docs/en/desktop) для черновиков, CLI для автоматизации | [Своя подписка](https://www.anthropic.com/legal/consumer-terms) у каждого участника | ✅ |
-| То же, другой агент | [OpenCode](https://opencode.ai/docs/skills/), v2.0.25 | Зависит от провайдера модели | ⚠️ Конфиг принят, правило на `npm run generate` применилось. Сценарий с моделью ещё не запускали |
-| То же, другой агент | [Codex](https://learn.chatgpt.com/docs/build-skills) | Зависит от плана | ⚠️ Настройка по документации, запуска не было. Сеть в песочнице включается в `.codex/config.toml`, на macOS есть [отчёт](https://github.com/openai/codex/issues/10390), что настройка не действует |
+| То же, другой агент | [OpenCode](https://opencode.ai/docs/skills/), v2.0.25 | Зависит от провайдера модели | ✅ Сценарий пройден |
+| То же, другой агент | [Codex](https://learn.chatgpt.com/docs/build-skills) | Зависит от плана | ✅ Сценарий пройден. Сеть в песочнице включается в `.codex/config.toml` |
 | Просмотр картинок и клипов | Галерея `review.html` в браузере, запуска или персонажа | Бесплатно | ⚠️ Генератор `npm run review` работает, во встроенном браузере Claude Desktop не проверена |
-| Установка инструментов на Apple Silicon | [Homebrew](https://brew.sh/) | Бесплатно | ⚠️ Команда в `/music-start`, на чистом Mac не запускали |
+| Установка инструментов на Apple Silicon | [Homebrew](https://brew.sh/) | Бесплатно | ✅ Проверено на чистом Mac через `/music-start` |
 | Установка инструментов на Intel | [Установщик Node.js](https://nodejs.org/dist/v26.13.0/), [установщик uv](https://docs.astral.sh/uv/getting-started/installation/), [FFmpeg с evermeet.cx](https://evermeet.cx/ffmpeg/) | Бесплатно | ⚠️ [Homebrew не собирает пакеты для Intel](https://docs.brew.sh/Support-Tiers). x64-сборки Node.js и uv проверены через Rosetta, FFmpeg только чтением файла, на настоящем Intel не запускали |
 | Рендер | [Remotion](https://www.remotion.dev/docs/license/faq) | Бесплатно для команды до 3 человек | ✅ Версия 4.0.540, тестовый рендер на Node 26 |
 | Шрифты без файлов в репозитории | `@remotion/google-fonts` | Бесплатно | ✅ Кириллица проверена, при рендере нужна сеть |
@@ -30,7 +30,7 @@
 |---|---|---|---|
 | Кадр персонажа по тексту | [Seedream 4.5](https://fal.ai/models/fal-ai/bytedance/seedream/v4.5/text-to-image) | $0,04 за кадр | ⚠️ На сравнении одного кадра самый реалистичный по оценке пользователя |
 | Референсы и кадры сцен | [Seedream 4.5 Edit](https://fal.ai/models/fal-ai/bytedance/seedream/v4.5/edit) | $0,04 за кадр | ⚠️ Лицо держится на тестовом наборе, цвет глаз нужно задавать явно, поза референса может копироваться |
-| Пение | [MiniMax H3 Max Lip Sync](https://fal.ai/models/minimax/h3-max/lip-sync/image-to-video), 768P | $0,08/с, клип длиннее 15 с $0,096/с | ⚠️ Основная. Для пения `enable_transcription: false`, аудио от 5 с. Губы подтверждены на слух только в 1080P, клип 7 с, $0,16/с |
+| Пение | [MiniMax H3 Max Lip Sync](https://fal.ai/models/minimax/h3-max/lip-sync/image-to-video), 768P | $0,08/с, клип длиннее 15 с $0,096/с | ✅ Основная. Для пения `enable_transcription: false`, аудио от 5 с. Губы подтверждены на слух в 768P и 1080P |
 | Чистый вокал для липсинка | [Demucs](https://fal.ai/models/fal-ai/demucs) | $0,0007/с | ✅ Использован в подтверждённом на слух клипе |
 | Планы без пения | [Kling 4.0 Reference to Video](https://fal.ai/models/kling/v4/reference-to-video), 720p | $0,157/с, в 1080p $0,235/с | ⚠️ По документации 3–30 с, 9:16, до 7 элементов. Лицо держится, действие выполнено слабо, добавляет свой звук. Широкие планы пользователь забраковал |
 | Биты и выбор фрагмента | [librosa](https://github.com/librosa/librosa), `npm run analyze-track` | Бесплатно | ✅ ISC. Проверено на треке 65 с и фрагменте 21 с, припев не определяет. Точность битов на слух не оценена |
