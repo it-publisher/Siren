@@ -42,6 +42,9 @@ npm ci
 | `npm run analyze-video -- --video <файл> --out <папка> [--frame-every <с>] [--scene-threshold <0–1>]` | Снимает размер, склейки, громкость и кадры в `metrics.json` и `frames/` |
 | `npm run analyze-track -- --audio <файл> --out <json> [--fragment <с>] [--candidates <n>]` | Находит биты и самые энергичные фрагменты. Нужен `uv`, первый запуск скачивает librosa |
 | `npm run transcribe -- --audio <файл> --out <json>` | Снимает тайминги через Whisper |
+| `npm run send -- --run <run-id> [--dry-run] [--publish-at <ISO>] [--story-video <файл>]` | Проверяет видео и подписи из `platforms.json`, собирает пакет и отправляет его в Siren Publisher на апрув. Сначала забирает результаты прошлых публикаций. Запускается через `/publish-package`: [гайд](../docs/guides/publishing.md) |
+| `npm run sync` | Забирает результаты публикаций в `published/music/<run-id>/publish.json` и `card.md` |
+| `node scripts/update-copy.mjs --copy <копия> --base <прошлая версия> --next <новая> [--apply]` | Обновляет рабочую копию до новой версии, не трогая контент: [гайд](../docs/guides/update.md) |
 | `npm run align -- --text <txt> --timing <json> --audio <файл> --out <json>` | Переносит тайминги на текст сценария |
 
 Для рендера нужна сеть: шрифты подгружаются через `@remotion/google-fonts`, чтобы их файлы не попадали в git.

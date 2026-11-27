@@ -16,4 +16,6 @@ work/<YYYY-MM-DD>-music-<slug>/
   render/
   checks/
   card.md
+  platforms.json подписи по площадкам для публикатора
+  package/       пакет для публикатора, удаляется после отправки
 ```

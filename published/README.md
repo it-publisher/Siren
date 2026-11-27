@@ -8,7 +8,10 @@ published/music/<run-id>/
   shot-plan.md   план съёмки
   scenes.json
   card.md        расходы, ссылка, результаты
-  caption.txt    описание рилса
+  caption.txt    подпись Instagram
+  caption-tiktok.txt  подпись для ручной загрузки в TikTok
+  platforms.json подписи по площадкам, отправленные в публикатор
+  publish.json   статусы и ссылки от публикатора
 ```
 
 Текстовые файлы хранятся в git. Видео копируй в резервное хранилище отдельно.

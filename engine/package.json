@@ -36,7 +36,9 @@
     "review": "node scripts/build-review.mjs",
     "generate": "node --env-file=../.env scripts/fal-generate.mjs",
     "analyze-video": "node scripts/analyze-video.mjs",
-    "analyze-track": "uv run --no-build --quiet scripts/analyze-track.py"
+    "analyze-track": "uv run --no-build --quiet scripts/analyze-track.py",
+    "send": "node scripts/publish-package.mjs send",
+    "sync": "node scripts/publish-package.mjs sync"
   },
   "allowScripts": {
     "esbuild": false

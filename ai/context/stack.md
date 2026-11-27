@@ -51,8 +51,10 @@
 
 | Задача | Инструмент | Статус |
 |---|---|---|
-| Сейчас | Вручную в приложении | ✅ |
-| Позже | [Instagram API](https://developers.facebook.com/docs/instagram-platform/content-publishing/) | ⚠️ Нужен профессиональный аккаунт и разрешения. В документации лимиты 100 и 50 постов в сутки |
+| Сторис Telegram, Instagram, YouTube | Siren Publisher после апрува в Telegram-боте: [гайд](../../docs/guides/publishing.md) | ✅ Проверено на тестовом рилсе. YouTube через Upload-Post, бесплатно 10 загрузок в месяц |
+| TikTok | Вручную в приложении, подпись готовит `/publish-package` | ✅ |
+| Страница Facebook | Вручную: «Поделиться» в Instagram после публикации | ✅ Автоматический репост Instagram на рилсы через API не срабатывает |
+| Без публикатора | Вручную в приложениях | ✅ |
 
 ## Что не используем
 

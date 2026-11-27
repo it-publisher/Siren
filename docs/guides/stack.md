@@ -57,8 +57,8 @@
 | Инструмент | Для чего | Цена | Статус |
 |---|---|---|---|
 | [Reels Trends](https://izea.com/resources/reels-trends-feature/) в приложении Instagram | Ручной сбор трендовых роликов и звуков | Бесплатно | ⚠️ Нужен профессиональный аккаунт. Описание из стороннего гайда |
-| Instagram на телефоне | Публикация и [метка ИИ](https://www.facebook.com/help/instagram/761121959519495), которой нет на десктопе | Бесплатно | ✅ |
-| [Instagram API](https://developers.facebook.com/docs/instagram-platform/content-publishing/) | Автопубликация на поздних этапах | Бесплатно | ⚠️ Разрешения и лимиты проверить |
+| Instagram на телефоне | Ручная публикация и [метка ИИ](https://www.facebook.com/help/instagram/761121959519495), которой нет на десктопе | Бесплатно | ✅ |
+| Siren Publisher | Автопубликация после апрува в Telegram-боте: сторис Telegram, Instagram, YouTube. [Гайд](publishing.md) | Сервер публикатора. YouTube через Upload-Post: бесплатно 10 загрузок в месяц | ✅ |
 | [Apify Instagram Reel Scraper](https://apify.com/apify/instagram-reel-scraper) | Автосбор трендов | $2,30 за 1000 результатов | ❌ Выключен: поля и условия Meta не проверены |
 
 ---
