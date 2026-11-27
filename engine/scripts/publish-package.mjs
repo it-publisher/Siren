@@ -78,10 +78,10 @@ const probeVideo = (path) => {
   return { durationSeconds: Number(format.duration), width: picture.width, height: picture.height, codec: picture.codec_name };
 };
 
-const checkVideo = (label, info) => {
+const checkVideo = (video) => {
   const errors = [];
-  if (!VIDEO_CODECS.includes(info.codec)) errors.push(`${label}: кодек ${info.codec}, Instagram принимает H.264 или HEVC`);
-  if (info.durationSeconds < MIN_SECONDS) errors.push(`${label}: ${info.durationSeconds.toFixed(1)} с, минимум ${MIN_SECONDS} с`);
+  if (!VIDEO_CODECS.includes(video.codec)) errors.push(`${video.file}: кодек ${video.codec}, Instagram принимает H.264 или HEVC`);
+  if (video.duration_sec < MIN_SECONDS) errors.push(`${video.file}: ${video.duration_sec.toFixed(1)} с, минимум ${MIN_SECONDS} с`);
   return errors;
 };
 
@@ -95,22 +95,35 @@ const sha256 = (path) => createHash("sha256").update(readFileSync(path)).digest(
 
 const describeVideo = (path, file) => {
   const info = probeVideo(path);
-  return { file, duration_sec: Math.round(info.durationSeconds * 1000) / 1000, width: info.width, height: info.height, sha256: sha256(path) };
+  return { file, duration_sec: Math.round(info.durationSeconds * 1000) / 1000, width: info.width, height: info.height, sha256: sha256(path), codec: info.codec };
 };
+
+// codec нужен только для проверки до отправки: схема манифеста публикатора его не содержит.
+const toManifestVideo = (video) => video && { file: video.file, duration_sec: video.duration_sec, width: video.width, height: video.height, sha256: video.sha256 };
 
 // ---------- Подписи ----------
 
 const utf8Bytes = (text) => Buffer.byteLength(text, "utf-8");
 const countMatches = (text, re) => (text.match(re) || []).length;
 
+// Возвращают true, если поле — строка: только тогда его можно проверять дальше без падения.
+const checkString = (errors, field, value) => {
+  if (typeof value === "string") return true;
+  errors.push(`${field}: нужна строка`);
+  return false;
+};
+
 const checkLength = (errors, field, text, max) => {
-  if (typeof text !== "string") return errors.push(`${field}: нужна строка`);
+  if (!checkString(errors, field, text)) return false;
   if (text.length > max) errors.push(`${field}: ${text.length} символов, максимум ${max}`);
+  return true;
 };
 
 const checkStory = (block, errors) => {
   checkLength(errors, "telegram_story.caption", block.caption ?? "", TELEGRAM_CAPTION_MAX);
-  for (const area of block.areas ?? []) {
+  const areas = block.areas ?? [];
+  if (!Array.isArray(areas)) return errors.push("telegram_story.areas: нужен массив");
+  for (const area of areas) {
     if (area.type !== "link") continue;
     if (!/^(https?|tg):\/\/\S+$/.test(area.url ?? "")) errors.push(`telegram_story.areas: неверная ссылка ${area.url}`);
     if (!area.label || area.label.length > LINK_LABEL_MAX) errors.push(`telegram_story.areas: label от 1 до ${LINK_LABEL_MAX} символов`);
@@ -119,24 +132,32 @@ const checkStory = (block, errors) => {
 
 const checkInstagram = (block, errors) => {
   const caption = block.caption ?? "";
-  checkLength(errors, "instagram.caption", caption, INSTAGRAM_CAPTION_MAX);
+  if (!checkLength(errors, "instagram.caption", caption, INSTAGRAM_CAPTION_MAX)) return;
   const hashtags = countMatches(caption, HASHTAG_RE);
   if (hashtags > INSTAGRAM_HASHTAGS_MAX) errors.push(`instagram.caption: хэштегов ${hashtags}, максимум ${INSTAGRAM_HASHTAGS_MAX}`);
   const mentions = countMatches(caption, MENTION_RE);
   if (mentions > INSTAGRAM_MENTIONS_MAX) errors.push(`instagram.caption: упоминаний ${mentions}, максимум ${INSTAGRAM_MENTIONS_MAX}`);
 };
 
-const checkYoutube = (block, errors) => {
-  const title = block.title ?? "";
-  const description = block.description ?? "";
-  if (block.enabled && !title.trim()) errors.push("youtube.title: нужен заголовок");
-  checkLength(errors, "youtube.title", title, YOUTUBE_TITLE_MAX);
-  if (/[<>]/.test(title + description)) errors.push("youtube: символы < и > запрещены в заголовке и описании");
-  if (utf8Bytes(description) > YOUTUBE_DESCRIPTION_MAX_BYTES) errors.push(`youtube.description: больше ${YOUTUBE_DESCRIPTION_MAX_BYTES} байт`);
-  const tags = block.tags ?? [];
+const checkYoutubeTags = (tags, errors) => {
+  if (!Array.isArray(tags) || !tags.every((tag) => typeof tag === "string")) return errors.push("youtube.tags: нужен массив строк");
   // Правило YouTube: запятые между тегами считаются, тег с пробелом — в кавычках.
   const tagsLength = tags.reduce((sum, tag) => sum + tag.length + (tag.includes(" ") ? 2 : 0), 0) + Math.max(tags.length - 1, 0);
   if (tagsLength > YOUTUBE_TAGS_MAX) errors.push(`youtube.tags: ${tagsLength} символов, максимум ${YOUTUBE_TAGS_MAX}`);
+};
+
+const checkYoutube = (block, errors) => {
+  const title = block.title ?? "";
+  const description = block.description ?? "";
+  if (checkLength(errors, "youtube.title", title, YOUTUBE_TITLE_MAX)) {
+    if (block.enabled && !title.trim()) errors.push("youtube.title: нужен заголовок");
+    if (/[<>]/.test(title)) errors.push("youtube.title: символы < и > запрещены");
+  }
+  if (checkString(errors, "youtube.description", description)) {
+    if (utf8Bytes(description) > YOUTUBE_DESCRIPTION_MAX_BYTES) errors.push(`youtube.description: больше ${YOUTUBE_DESCRIPTION_MAX_BYTES} байт`);
+    if (/[<>]/.test(description)) errors.push("youtube.description: символы < и > запрещены");
+  }
+  checkYoutubeTags(block.tags ?? [], errors);
 };
 
 const checkTiktok = (block, errors) => {
@@ -155,6 +176,10 @@ const checkPlatforms = (platforms) => {
       continue;
     }
     if (block === null) continue;
+    if (typeof block !== "object" || Array.isArray(block)) {
+      errors.push(`${name}: нужен объект с полями площадки`);
+      continue;
+    }
     if (typeof block.enabled !== "boolean") errors.push(`${name}.enabled: нужно true или false`);
     PLATFORM_CHECKS[name](block, errors);
   }
@@ -188,6 +213,10 @@ const isoLocal = (date) => {
 };
 
 const buildStoryVideo = (options, packageDir, main, storyEnabled) => {
+  if (options.storyVideo && !storyEnabled) {
+    say("⚠️ Сторис выключена в platforms.json, --story-video не используется");
+    return { video: null, note: null };
+  }
   if (options.storyVideo) {
     remux(options.storyVideo, join(packageDir, "story.mp4"));
     return { video: describeVideo(join(packageDir, "story.mp4"), "story.mp4"), note: "сторис: отдельное видео" };
@@ -205,7 +234,7 @@ const buildPackage = (options, runDir, packageDir, platforms) => {
   remux(source, join(packageDir, "video.mp4"));
   const video = describeVideo(join(packageDir, "video.mp4"), "video.mp4");
   const story = buildStoryVideo(options, packageDir, video, Boolean(platforms.telegram_story?.enabled));
-  const errors = [video, story.video].filter(Boolean).flatMap((item) => checkVideo(item.file, probeVideo(join(packageDir, item.file))));
+  const errors = [video, story.video].filter(Boolean).flatMap(checkVideo);
   if (story.video && story.video.duration_sec > STORY_MAX_SECONDS) errors.push(`story.mp4: ${story.video.duration_sec} с, максимум ${STORY_MAX_SECONDS} с`);
   if (errors.length > 0) throw new Error(`Пакет не собран:\n- ${errors.join("\n- ")}`);
   const manifest = {
@@ -213,8 +242,8 @@ const buildPackage = (options, runDir, packageDir, platforms) => {
     reel_id: options.run,
     created_at: isoLocal(new Date()),
     character: readCharacter(runDir),
-    video,
-    story_video: story.video,
+    video: toManifestVideo(video),
+    story_video: toManifestVideo(story.video),
     publish_at: options.publishAt ?? null,
     platforms,
     notes: "",
@@ -237,7 +266,9 @@ const checkRsync = () => {
 
 const uploadPackage = (remote, packageDir, runId) => {
   const target = `${remote}inbox/${runId}/`;
-  runTool("rsync", ["-a", "--partial", "--exclude", ".ready", `${packageDir}/`, target]);
+  // Повторная отправка в ту же папку: старый .ready и лишний story.mp4 удаляются до заливки,
+  // иначе публикатор может взять смесь старого и нового пакета.
+  runTool("rsync", ["-a", "--partial", "--delete-before", "--delete-excluded", "--exclude", ".ready", `${packageDir}/`, target]);
   writeFileSync(join(packageDir, ".ready"), "");
   runTool("rsync", ["-a", join(packageDir, ".ready"), target]);
 };
@@ -332,8 +363,12 @@ const syncSafely = (options) => {
 
 try {
   const options = readOptions();
-  if (options.command === "sync") sync(options);
-  else send(options);
+  if (options.command === "sync") {
+    checkRsync();
+    sync(options);
+  } else {
+    send(options);
+  }
 } catch (error) {
   process.stderr.write(`❌ ${error.message}\n`);
   process.exit(1);

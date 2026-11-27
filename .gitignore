@@ -24,6 +24,10 @@ models/
 work/*
 !work/README.md
 
+# Опубликованные рилсы — контент рабочих копий, в публичный движок они не попадают
+published/music/*
+!published/music/.gitkeep
+
 # Тестовые персонажи не должны попасть в публичный клон движка
 characters/test-*/
 

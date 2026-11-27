@@ -47,14 +47,14 @@ const USER_CONTENT = {
   "engine/node_modules/x/index.js": "dep",
 };
 
-const withCopies = (localChanges, check) => {
+// local — правки в копии поверх v1.0, base и next — отличия версий от общих наборов выше.
+const withCopies = ({ local = {}, base = {}, next = {} }, check) => {
   const dir = mkdtempSync(join(tmpdir(), "siren-update-"));
   try {
     const paths = { base: join(dir, "base"), next: join(dir, "next"), copy: join(dir, "copy") };
-    writeTree(paths.base, BASE);
-    writeTree(paths.next, NEXT);
-    writeTree(paths.copy, { ...BASE, ...USER_CONTENT });
-    writeTree(paths.copy, localChanges);
+    writeTree(paths.base, { ...BASE, ...base });
+    writeTree(paths.next, { ...NEXT, ...next });
+    writeTree(paths.copy, { ...BASE, ...base, ...USER_CONTENT, ...local });
     check(paths);
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -91,7 +91,7 @@ test("apply updates engine files and keeps user content", () => {
 });
 
 test("local edits of engine files stop the update", () => {
-  withCopies({ "ai/skills/publish-package/SKILL.md": "skill edited by the agent" }, (paths) => {
+  withCopies({ local: { "ai/skills/publish-package/SKILL.md": "skill edited by the agent" } }, (paths) => {
     const result = run(paths, ["--apply"]);
     assert.equal(result.status, 2);
     assert.match(result.stdout, /Изменены в копии.*\(1\):\n {2}ai\/skills\/publish-package\/SKILL.md/);
@@ -105,5 +105,53 @@ test("refuses a folder that is not Siren", () => {
     const result = run(paths);
     assert.equal(result.status, 1);
     assert.match(result.stderr, /не похоже на папку Siren/);
+  });
+});
+
+test("a file new in the version that the copy already has with other content stops the update", () => {
+  withCopies({ local: { "engine/scripts/publish-package.mjs": "own script" } }, (paths) => {
+    const result = run(paths, ["--apply"]);
+    assert.equal(result.status, 2);
+    assert.match(result.stdout, /Изменены в копии.*\(1\):\n {2}engine\/scripts\/publish-package.mjs/);
+    assert.equal(readFileSync(join(paths.copy, "engine/scripts/publish-package.mjs"), "utf-8"), "own script");
+  });
+});
+
+test("a file new in the version that the copy already has with the same content is not a conflict", () => {
+  withCopies({ local: { "engine/scripts/publish-package.mjs": "new script" } }, (paths) => {
+    const result = run(paths, ["--apply"]);
+    assert.equal(result.status, 0, result.stdout);
+    assert.match(result.stdout, /Добавить \(1\):\n {2}VERSION\n/);
+  });
+});
+
+test("apply repoints a symlink that changed between versions", () => {
+  const versions = {
+    base: { ".agents/skills/publish-package": "link:../../ai/skills/old-name" },
+    next: { ".agents/skills/publish-package": "link:../../ai/skills/publish-package" },
+  };
+  withCopies(versions, (paths) => {
+    const result = run(paths, ["--apply"]);
+    assert.equal(result.status, 0, result.stdout);
+    assert.match(result.stdout, /Обновить \(4\):[\s\S]* {2}\.agents\/skills\/publish-package\n/);
+    assert.equal(readlinkSync(join(paths.copy, ".agents/skills/publish-package")), "../../ai/skills/publish-package");
+  });
+});
+
+test(".env variants stay untouched even if a version ships one, .env.example is updated", () => {
+  const versions = {
+    local: { ".env.local": "FAL_KEY=local-secret" },
+    base: { ".env.local": "from v1.0" },
+    next: { ".env.local": "from v1.1", ".env.example": "FAL_KEY=\nNEW_KEY=" },
+  };
+  withCopies(versions, (paths) => {
+    const result = run(paths, ["--apply"]);
+    assert.equal(result.status, 0, result.stdout);
+    const [engineLists] = result.stdout.split("Изменились в новой версии, но это контент");
+    assert.doesNotMatch(engineLists, /\.env\.local/, "never updated as an engine file");
+    assert.match(result.stdout, /правка вручную по описанию версии \(2\):\n {2}\.env\.local\n/);
+    assert.equal(readFileSync(join(paths.copy, ".env.local"), "utf-8"), "FAL_KEY=local-secret");
+    assert.equal(readFileSync(join(paths.copy, ".env"), "utf-8"), "FAL_KEY=secret");
+    assert.equal(readFileSync(join(paths.copy, ".env.example"), "utf-8"), "FAL_KEY=\nNEW_KEY=");
   });
 });
